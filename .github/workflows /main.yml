@@ -1,3 +1,4 @@
+name: kbuilder
 on:
   workflow_dispatch:
     branches: [ non-ksu ]
