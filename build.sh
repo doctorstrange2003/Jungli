@@ -108,6 +108,14 @@ md5sum $FINAL_KERNEL_ZIP
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
-post_msg="Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)
-MD5 Checksum: $MD5CHECK"
-curl -v -F chat_id=$chat_id -F document=@$FINAL_KERNEL_ZIP -F caption="$post_msg" https://api.telegram.org/bot$token/sendDocument￼Enter
+tg_post_msg "Kernel successfully compiled uploading ZIP" "$CHATID"
+                tg_post_build "$FINAL_KERNEL_ZIP".zip "$CHATID"
+                tg_post_msg "done" "$CHATID"
+                cd ..
+                rm -rf error.log
+                rm -rf out
+                rm -rf zip
+                rm -rf testing.log
+                rm -rf zipsigner-3.0.jar
+                exit
+        fi
