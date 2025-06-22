@@ -1,7 +1,7 @@
 name: kbuilder
 on:
   workflow_dispatch:
-    branches: [ non-ksu ]
+
 jobs:
   node-docker:
     runs-on: ubuntu-latest
@@ -19,4 +19,4 @@ jobs:
       - run: bash build.sh
     env:
         token: ${{ secrets.TOKEN }}
-        chat_id: ${{ secrets.CHAT_ID }}￼Enter
+        chat_id: ${{ secrets.CHAT_ID }}
