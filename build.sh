@@ -2,38 +2,10 @@
 
 #set -e
 
-## bhadwa sala randibazz
-
-tg_post_msg() {
-        curl -s -X POST "$BOT_MSG_URL" -d chat_id="$2" \
-        -d "parse_mode=html" \
-        -d text="$1"
-}
-
-tg_post_build() {
-        #Post MD5Checksum alongwith for easeness
-        MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
-
-        #Show the Checksum alongwith caption
-        curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
-        -F chat_id="$2" \
-        -F "disable_web_page_preview=true" \
-        -F "parse_mode=html" \
-        -F caption="$3 build finished in $(($Diff / 60)) minutes and $(($Diff % 60)) seconds | <b>MD5 Checksum : </b><code>$MD5CHECK</code>"
-}
-
-tg_error() {
-        curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
-        -F chat_id="$2" \
-        -F "disable_web_page_preview=true" \
-        -F "parse_mode=html" \
-        -F caption="$3Failed to build , check <code>error.log</code>"
-}
-
 ## Copy this script inside the kernel directory
 KERNEL_DEFCONFIG=vendor/miatoll-perf_defconfig
 ANYKERNEL3_DIR=$PWD/AnyKernel3/
-FINAL_KERNEL_ZIP=jungli-MiAtoll-$(date '+%Y%m%d').zip
+FINAL_KERNEL_ZIP=Niggatron-NonKSU-MiAtoll-$(date '+%Y%m%d').zip
 export PATH="$HOME/tools/yuki-clang/bin:$PATH"
 export ARCH=arm64
 export KBUILD_BUILD_HOST=Github-CI
@@ -108,14 +80,6 @@ md5sum $FINAL_KERNEL_ZIP
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
-tg_post_msg "Kernel successfully compiled uploading ZIP" "$CHATID"
-                tg_post_build "$FINAL_KERNEL_ZIP".zip "$CHATID"
-                tg_post_msg "done" "$CHATID"
-                cd ..
-                rm -rf error.log
-                rm -rf out
-                rm -rf zip
-                rm -rf testing.log
-                rm -rf zipsigner-3.0.jar
-                exit
-        fi
+post_msg="Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)
+MD5 Checksum: $MD5CHECK"
+curl -v -F chat_id=$chat_id -F document=@$FINAL_KERNEL_ZIP -F caption="$post_msg" https://api.telegram.org/bot$token/sendDocument
